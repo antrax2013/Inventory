@@ -1,4 +1,4 @@
-﻿var inventory = new Inventory.Inventory(new()
+﻿var inventory = new Inventory.ConcurrentInventory(new()
 {
     ["P1"] = 50,
     ["P2"] = 50,
