@@ -1,4 +1,4 @@
-﻿var inventory = new Inventory.ConcurrentInventory(new()
+﻿var inventory = new Inventory.SemaphoreSlimInventory(new()
 {
     ["P1"] = 50,
     ["P2"] = 50,
@@ -11,7 +11,7 @@ var threads = new List<Thread>();
 
 for (int i = 0; i < 100; i++)
 {
-    var t = new Thread(() =>
+    var t = new Thread(async () =>
     {
         var rnd = new Random();
         for (int j = 0; j < 1000; j++)
@@ -20,9 +20,9 @@ for (int i = 0; i < 100; i++)
             var qty = rnd.Next(1, 3);
 
             if (rnd.NextDouble() < 0.5)
-                inventory.Add(product, qty);
+                await inventory.Add(product, qty);
             else
-                inventory.Remove(product, qty);
+                await inventory.Remove(product, qty);
         }
     });
 
@@ -35,5 +35,5 @@ threads.ForEach(t => t.Join());
 Console.WriteLine("Stock final :");
 foreach (var p in new[] { "P1", "P2", "P3", "P4" })
 {
-    Console.WriteLine($"{p} = {inventory.GetQuantity(p)}");
+    Console.WriteLine($"{p} = {await inventory.GetQuantity(p)}");
 }

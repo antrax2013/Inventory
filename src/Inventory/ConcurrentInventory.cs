@@ -11,7 +11,7 @@ public class ConcurrentInventory : IInventory
         _stock = new ConcurrentDictionary<string, int>(stock);
     }
 
-    public void Add(string product, int quantity)
+    public async Task Add(string product, int quantity)
     {
         _stock.AddOrUpdate(
             product,
@@ -20,7 +20,7 @@ public class ConcurrentInventory : IInventory
         );
     }
 
-    public void Remove(string product, int quantity)
+    public async Task Remove(string product, int quantity)
     {
         _stock.AddOrUpdate(
             product,
@@ -33,7 +33,7 @@ public class ConcurrentInventory : IInventory
         );
     }
 
-    public int GetQuantity(string product)
+    public async Task<int> GetQuantity(string product)
     {
         return _stock.TryGetValue(product, out var quantity) ? quantity : 0;
     }

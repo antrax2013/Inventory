@@ -2,7 +2,7 @@
 
 public interface IInventory
 {
-    void Add(string product, int quantity);
-    int GetQuantity(string product);
-    void Remove(string product, int quantity);
+    Task Add(string product, int quantity);
+    Task<int> GetQuantity(string product);
+    Task Remove(string product, int quantity);
 }
