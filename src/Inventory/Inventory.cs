@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Inventory;
+﻿namespace Inventory;
 
 public class Inventory
 {
@@ -24,7 +22,11 @@ public class Inventory
         if (!_stock.ContainsKey(product))
             return;
 
-        _stock[product] -= quantity;
+        var acutalQuantity = _stock[product];
+        var newQuantity = acutalQuantity - quantity;
+
+        if (newQuantity >= 0)
+            _stock[product] = newQuantity;
     }
 
     public int GetQuantity(string product)

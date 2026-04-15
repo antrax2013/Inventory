@@ -5,23 +5,10 @@ using Inventory;
 public class InventoryTests
 {
     [Test]
-    public void ConcurrentAccess_ShouldNotCrash()
+    public void RemoveOne_Quantity_ShouldNotBeNegative()
     {
-        var inventory = new Inventory([]);
-
-        Parallel.For(0, 10_000, i =>
-        {
-            inventory.Add("P1", 1);
-            inventory.Remove("P1", 1);
-        });
-
-        Assert.That(true); // Vérifie juste l'absence d'exception
-    }
-
-    [Test]
-    public void RemoveOne_Quantity_ShouldNotBeNegative() {
         // Given
-        var inventory = new Inventory(new() { ["P1"] = 0});
+        var inventory = new Inventory(new() { ["P1"] = 0 });
 
         // When
         inventory.Remove("P1", 1);
@@ -29,5 +16,21 @@ public class InventoryTests
 
         // Then
         Assert.That(quantity, Is.GreaterThan(-1));
+    }
+
+    [Test]
+    public void ConcurrentAccess_ShouldBreakWithoutLocks()
+    {
+        var inventory = new Inventory(new Dictionary<string, int> { ["P1"] = 0 });
+
+        Parallel.For(0, 1000, _ =>
+        {
+            inventory.Add("P1", 1);
+            inventory.Remove("P1", 1);
+        });
+
+        var quantity = inventory.GetQuantity("P1");
+
+        Assert.That(quantity, Is.EqualTo(0)); // Le test doit échouer → race condition
     }
 }
