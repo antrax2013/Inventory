@@ -8,7 +8,7 @@ public class InventoryTests
     public void RemoveOne_Quantity_ShouldNotBeNegative()
     {
         // Given
-        var inventory = new Inventory(new() { ["P1"] = 0 });
+        IInventory inventory = new Inventory(new() { ["P1"] = 0 });
 
         // When
         inventory.Remove("P1", 1);
@@ -21,7 +21,7 @@ public class InventoryTests
     [Test]
     public void ConcurrentAccess_ShouldBreakWithoutLocks()
     {
-        var inventory = new Inventory(new Dictionary<string, int> { ["P1"] = 0 });
+        IInventory inventory = new Inventory(new Dictionary<string, int> { ["P1"] = 0 });
 
         Parallel.For(0, 1000, _ =>
         {

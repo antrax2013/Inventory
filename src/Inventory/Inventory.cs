@@ -1,8 +1,9 @@
 ﻿namespace Inventory;
 
-public class Inventory
+public class Inventory : IInventory
 {
     private readonly Dictionary<string, int> _stock;
+    private readonly object _lock = new();
 
     public Inventory(Dictionary<string, int> stock)
     {
@@ -11,26 +12,35 @@ public class Inventory
 
     public void Add(string product, int quantity)
     {
-        if (!_stock.ContainsKey(product))
-            _stock[product] = 0;
+        lock (_lock)
+        {
+            if (!_stock.ContainsKey(product))
+                _stock[product] = 0;
 
-        _stock[product] += quantity;
+            _stock[product] += quantity;
+        }
     }
 
     public void Remove(string product, int quantity)
     {
-        if (!_stock.ContainsKey(product))
-            return;
+        lock (_lock)
+        {
+            if (!_stock.ContainsKey(product))
+                return;
 
-        var acutalQuantity = _stock[product];
-        var newQuantity = acutalQuantity - quantity;
+            var acutalQuantity = _stock[product];
+            var newQuantity = acutalQuantity - quantity;
 
-        if (newQuantity >= 0)
-            _stock[product] = newQuantity;
+            if (newQuantity >= 0)
+                _stock[product] = newQuantity;
+        }
     }
 
     public int GetQuantity(string product)
     {
-        return _stock.TryGetValue(product, out var qty) ? qty : 0;
+        lock (_lock)
+        {
+            return _stock.TryGetValue(product, out var qty) ? qty : 0;
+        }
     }
 }
