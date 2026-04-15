@@ -1,0 +1,5 @@
+/src/Inventory/bin/*
+/src/Inventory/obj/*
+/tests/InventoryTests/bin/*
+/tests/InventoryTests/obj/*
+/.vs/*

@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Inventory/Inventory.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/InventoryTests/InventoryTests.csproj" />
+  </Folder>
+  <Folder Name="/Éléments de solution/">
+    <File Path="Readme.md" />
+  </Folder>
+</Solution>
