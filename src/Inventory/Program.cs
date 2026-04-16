@@ -1,39 +1,35 @@
-﻿var inventory = new Inventory.SemaphoreSlimInventory(new()
+﻿using Inventory;
+
+// -------------------------------
+// CONFIG
+// -------------------------------
+const int Iterations = 500_000;
+const int Threads = 100;
+
+Console.WriteLine($"Benchmark Inventory — {Iterations} opérations, {Threads} threads\n");
+
+static Task DistributedAdd(IInventory inv, int quantity)
 {
-    ["P1"] = 50,
-    ["P2"] = 50,
-    ["P3"] = 50,
-    ["P4"] = 50
-});
-
-var threads = new List<Thread>();
-
-
-for (int i = 0; i < 100; i++)
-{
-    var t = new Thread(async () =>
-    {
-        var rnd = new Random();
-        for (int j = 0; j < 1000; j++)
-        {
-            var product = "P" + rnd.Next(1, 5);
-            var qty = rnd.Next(1, 3);
-
-            if (rnd.NextDouble() < 0.5)
-                await inventory.Add(product, qty);
-            else
-                await inventory.Remove(product, qty);
-        }
-    });
-
-    threads.Add(t);
-    t.Start();
+    int indice = Random.Shared.Next(0, 100);
+    Task.Delay(2);
+    inv.Add($"P{indice}", quantity);
+    return Task.CompletedTask;
 }
 
-threads.ForEach(t => t.Join());
+// -------------------------------
+// BENCHMARKS
+// -------------------------------
+var invLock = new Inventory.Inventory([]);
+await BenchmarkHelper.Run("Lock global", Iterations, () => DistributedAdd(invLock, 1));
 
-Console.WriteLine("Stock final :");
-foreach (var p in new[] { "P1", "P2", "P3", "P4" })
-{
-    Console.WriteLine($"{p} = {await inventory.GetQuantity(p)}");
-}
+var invSem = new SemaphoreSlimInventory([]);
+await BenchmarkHelper.Run("SemaphoreSlim global", Iterations, () => DistributedAdd(invSem, 1));
+
+var invLocal = new LockOnProductsInventory([]);
+await BenchmarkHelper.Run("Lock par produit", Iterations, () => DistributedAdd(invLocal, 1));
+
+var invConcurrent = new ConcurrentInventory([]);
+await BenchmarkHelper.Run("ConcurrentDictionary", Iterations, () => DistributedAdd(invConcurrent, 1));
+
+
+Console.WriteLine("\nBenchmark terminé.");
