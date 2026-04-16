@@ -1,12 +1,12 @@
 ﻿using Inventory;
 namespace InventoryTests;
 
-public class ConcurrentInventoryTests
+public class LockOnProductsInventoryTests
 {
     [Test]
     public async Task Inventory_ShouldBeConsistent_WithConcurrentDictionary()
     {
-        var inventory = new ConcurrentInventory(new Dictionary<string, int> { ["P1"] = 0 });
+        IInventory inventory = new LockOnProductsInventory(new Dictionary<string, int> { ["P1"] = 0 });
 
         Parallel.For(0, 1000, async _ =>
         {
@@ -22,7 +22,7 @@ public class ConcurrentInventoryTests
     [Test]
     public async Task Inventory_ShouldSupportParallelUpdates_OnDifferentProducts()
     {
-        var inventory = new ConcurrentInventory(new()
+        var inventory = new LockOnProductsInventory(new()
         {
             ["P1"] = 0,
             ["P2"] = 0
@@ -42,4 +42,5 @@ public class ConcurrentInventoryTests
             Assert.That(await inventory.GetQuantity("P2"), Is.EqualTo(5000));
         });
     }
+
 }
