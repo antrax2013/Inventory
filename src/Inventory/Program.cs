@@ -31,5 +31,8 @@ await BenchmarkHelper.Run("Lock par produit", Iterations, () => DistributedAdd(i
 var invConcurrent = new ConcurrentInventory([]);
 await BenchmarkHelper.Run("ConcurrentDictionary", Iterations, () => DistributedAdd(invConcurrent, 1));
 
+var invInterlocked = new InterlockedInventory([]);
+await BenchmarkHelper.Run("Interlocked", Iterations, () => DistributedAdd(invInterlocked, 1));
+
 
 Console.WriteLine("\nBenchmark terminé.");

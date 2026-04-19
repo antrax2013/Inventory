@@ -6,6 +6,7 @@
     <Project Path="tests/InventoryTests/InventoryTests.csproj" />
   </Folder>
   <Folder Name="/Éléments de solution/">
+    <File Path="Benchmark.md" />
     <File Path="Readme.md" />
   </Folder>
 </Solution>
