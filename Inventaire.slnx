@@ -8,5 +8,6 @@
   <Folder Name="/Éléments de solution/">
     <File Path="Benchmark.md" />
     <File Path="Readme.md" />
+    <File Path="Results.md" />
   </Folder>
 </Solution>
